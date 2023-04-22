@@ -20,5 +20,7 @@ internal interface SavedSearchDao {
     @Query("select exists (select 1 from SavedSearch where searchWord = :search)")
     fun existsSearch(search: String): Boolean
 
+    @Query("select searchWord from SavedSearch")
+    fun getSearchStrings(): List<String>
 
 }

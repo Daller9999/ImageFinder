@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken
 import com.testapp.data.datastore.SavedSearchRepository
 import com.testapp.data.room.dao.SavedSearchDao
 import com.testapp.data.room.entities.SavedSearch
+import com.testapp.entities.Image
 import com.testapp.entities.ImageList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -34,15 +35,19 @@ internal class SavedSearchRepositoryImpl(
 
     override suspend fun updateSearch(
         search: String,
-        json: String
+        list: List<Image>
     ) = withContext(Dispatchers.IO) {
-        searchDao.updateSearch(search, gson.toJson(json))
+        searchDao.updateSearch(search, gson.toJson(list))
     }
 
     override suspend fun existsSearch(
         search: String
     ): Boolean = withContext(Dispatchers.IO) {
         searchDao.existsSearch(search)
+    }
+
+    override suspend fun getSearchStrings(): List<String> = withContext(Dispatchers.IO) {
+        searchDao.getSearchStrings()
     }
 
     private fun ImageList.toSavedSearch() = SavedSearch(
