@@ -53,14 +53,18 @@ private fun ImageView(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val keyboardState by keyboardAsState()
+    val lastKeyBoardState = remember { mutableStateOf(Keyboard.Closed) }
     val scrollState = rememberLazyListState()
     val index = remember { derivedStateOf { scrollState.firstVisibleItemIndex } }.value
     if (state.images.isNotEmpty() && index + 20 > state.images.size) {
         onLoadNext.invoke()
     }
     if (keyboardState == Keyboard.Closed) {
-        onHideKeyBoard.invoke()
+        if (lastKeyBoardState.value != keyboardState) {
+            onHideKeyBoard.invoke()
+        }
     }
+    lastKeyBoardState.value = keyboardState
 
     Column(
         modifier = Modifier
