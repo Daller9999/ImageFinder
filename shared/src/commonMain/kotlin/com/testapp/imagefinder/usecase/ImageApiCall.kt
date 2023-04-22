@@ -8,7 +8,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 
 class ImageApiCall(
-    private val clientCore: ClientCore
+    clientCore: ClientCore
 ): ApiCall(clientCore) {
 
     suspend fun findImages(search: String): ImageList {

@@ -53,6 +53,8 @@ dependencies {
     val coroutinesVersion = "1.6.1"
 
     implementation(project(":domain"))
+    implementation(project(":entities"))
+    implementation("io.coil-kt:coil-compose:2.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
     implementation("io.insert-koin:koin-core:$koinVersion")

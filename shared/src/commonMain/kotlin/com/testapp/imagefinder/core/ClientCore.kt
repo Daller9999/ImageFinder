@@ -4,7 +4,7 @@ import io.ktor.client.features.*
 import io.ktor.client.request.*
 
 class ClientCore(
-    private val clientInfo: ClientInfo,
+    clientInfo: ClientInfo,
     val configuration: Configuration
 ) {
 

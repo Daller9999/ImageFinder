@@ -1,4 +1,7 @@
 package com.testapp.imagefinder.android.screens.images.model
 
-class ImagesViewState {
-}
+import com.testapp.entities.Image
+
+data class ImagesViewState(
+    val images: List<Image> = emptyList()
+)
