@@ -1,14 +1,14 @@
-//import java.util.Properties
-//import java.io.FileInputStream
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
     kotlin("android")
 }
 
-//val apikeyPropertiesFile = rootProject.file("apikey.properties")
-//val apikeyProperties = Properties()
-//apikeyProperties.load(FileInputStream(apikeyPropertiesFile))
+val apikeyPropertiesFile = rootProject.file("apikey.properties")
+val apikeyProperties = Properties()
+apikeyProperties.load(FileInputStream(apikeyPropertiesFile))
 
 android {
     namespace = "com.testapp.imagefinder.android"
@@ -20,7 +20,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        buildConfigField("String", "API_KEY", "fsdf")
+        buildConfigField("String", "API_KEY", apikeyProperties["API_KEY"] as String)
     }
     buildFeatures {
         compose = true
@@ -48,14 +48,22 @@ android {
 }
 
 dependencies {
-    val compose_version = "1.2.0"
+    val composeVersion = "1.2.0"
+    val koinVersion = "3.2.2"
+    val coroutinesVersion = "1.6.1"
 
-    implementation(project(":shared"))
-    implementation("androidx.compose.ui:ui:$compose_version")
-    implementation("androidx.compose.material:material:$compose_version")
-    implementation("androidx.compose.compiler:compiler:$compose_version")
-    implementation("androidx.compose.ui:ui-tooling-preview:$compose_version")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
-    implementation("androidx.compose.ui:ui-tooling:$compose_version")
+    implementation(project(":domain"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
+    implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-android:$koinVersion")
+    implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
+    implementation("androidx.navigation:navigation-compose:2.4.0")
+    implementation("androidx.compose.ui:ui:$composeVersion")
+    implementation("androidx.compose.material:material:$composeVersion")
+    implementation("androidx.compose.compiler:compiler:$composeVersion")
+    implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
+    implementation("androidx.compose.ui:ui-tooling:$composeVersion")
     implementation("androidx.activity:activity-compose:1.7.1")
 }

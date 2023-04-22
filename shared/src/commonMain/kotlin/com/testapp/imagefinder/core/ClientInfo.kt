@@ -1,4 +1,4 @@
-package com.testapp.imagefinder
+package com.testapp.imagefinder.core
 
 import io.ktor.client.*
 

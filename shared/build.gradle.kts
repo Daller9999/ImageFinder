@@ -35,12 +35,14 @@ kotlin {
     
     sourceSets {
         val ktorVersion = "1.6.4"
+        val koinVersion = "3.2.0"
         val serializationVersion = "1.6.4"
         val coroutineVersion = "1.6.4"
         val coroutineVersionNative = "1.6.3-native-mt"
 
         val commonMain by getting {
             dependencies {
+                implementation("io.insert-koin:koin-core:$koinVersion")
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-serialization:$serializationVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutineVersionNative")
