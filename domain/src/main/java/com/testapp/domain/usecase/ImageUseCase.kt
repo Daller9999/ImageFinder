@@ -13,9 +13,13 @@ internal class ImageUseCase(
 ): ImageInteractor {
 
     override suspend fun findImage(
-        search: String
+        search: String,
+        page: Int
     ): List<Image> = makeApiCall {
-        imageApiCall.findImages(search).hits.map { it.toImage() }
+        imageApiCall.findImages(
+            search = search,
+            page = page
+        ).hits.map { it.toImage() }
     } ?: emptyList()
 
     override fun setApiKey(key: String) {

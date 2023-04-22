@@ -4,24 +4,27 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.testapp.coreui.TagView
 import com.testapp.entities.Image
+import com.testapp.imagefinder.android.R
 import com.testapp.imagefinder.android.screens.images.model.ImagesEvent
 import com.testapp.imagefinder.android.screens.images.model.ImagesViewState
 
@@ -30,34 +33,67 @@ fun ImageScreen(navController: NavController, viewModel: ImagesViewModel) {
     val state = viewModel.viewStates().collectAsState()
     ImageView(
         state = state.value,
-        onTextChange = { viewModel.obtainEvent(ImagesEvent.OnTextChanged(it)) }
+        onTextChange = { viewModel.obtainEvent(ImagesEvent.OnTextChanged(it)) },
+        onLoadNext = { viewModel.obtainEvent(ImagesEvent.OnLoadNext) }
     )
 }
 
 @Composable
 private fun ImageView(
     state: ImagesViewState,
-    onTextChange: (String) -> Unit
+    onTextChange: (String) -> Unit,
+    onLoadNext: () -> Unit
 ) {
-    val text = remember { mutableStateOf("") }
+    val scrollState = rememberLazyListState()
+    val index = remember { derivedStateOf { scrollState.firstVisibleItemIndex } }.value
+    if (state.images.isNotEmpty() && index + 20 > state.images.size) {
+        onLoadNext.invoke()
+    }
+    val focusState = remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 10.dp)
             .background(color = Color.White)
     ) {
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = text.value,
-            onValueChange = {
-                text.value = it
-                onTextChange.invoke(it)
-            }
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp)
+                .onFocusChanged {
+                    focusState.value = it.isFocused
+                },
+            singleLine = true,
+            value = state.textSearch,
+            onValueChange = onTextChange
         )
-        LazyColumn {
-            items(state.images) {
-                ImageRow(it)
+        if (state.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(80.dp),
+                    color = Color.Green,
+                    strokeWidth = 10.dp
+                )
             }
+        } else if (state.images.isNotEmpty()) {
+            LazyColumn(state = scrollState) {
+                items(state.images) {
+                    ImageRow(it)
+                }
+            }
+        } else {
+            Text(
+                modifier = Modifier
+                    .padding(top = 50.dp)
+                    .fillMaxWidth(),
+                text = stringResource(id = R.string.empty),
+                fontSize = 24.sp,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
@@ -81,7 +117,12 @@ private fun ImageViewInfo(modifier: Modifier, image: Image) {
         Card(shape = RoundedCornerShape(size = 20.dp)) {
             AsyncImage(
                 modifier = Modifier.height(220.dp),
-                model = image.webFormatURL,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(image.webFormatURL)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .crossfade(true)
+                    .build(),
                 contentScale = ContentScale.Crop,
                 contentDescription = null
             )

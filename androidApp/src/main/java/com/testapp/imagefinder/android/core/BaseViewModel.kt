@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -25,10 +26,8 @@ abstract class BaseViewModel<State, Event>(
         _viewStates.update(update)
     }
 
-    fun launchIO(call: suspend () -> Unit) {
-        viewModelScope.launch(Dispatchers.IO) {
-            call.invoke()
-        }
-    }
+    fun launchIO(
+        call: suspend () -> Unit
+    ) = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) { call.invoke() }
 
 }

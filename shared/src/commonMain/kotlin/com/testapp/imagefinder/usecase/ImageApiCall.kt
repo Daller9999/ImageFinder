@@ -11,9 +11,10 @@ class ImageApiCall(
     clientCore: ClientCore
 ): ApiCall(clientCore) {
 
-    suspend fun findImages(search: String): ImageList {
+    suspend fun findImages(search: String, page: Int): ImageList {
         val url = "${ApiLinks.BASE_URL}/${ApiLinks.API_ROUTE}/"
         return client.request(url) {
+            parameter("page", page)
             parameter("per_page", 100)
             parameter("q", search)
             parameter("image_type", "photo")
