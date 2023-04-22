@@ -1,5 +1,6 @@
 package com.testapp.domain.usecase
 
+import com.testapp.data.datastore.SavedSearchRepository
 import com.testapp.domain.interactors.ImageInteractor
 import com.testapp.domain.util.makeApiCall
 import com.testapp.domain.util.toImage
@@ -9,7 +10,8 @@ import com.testapp.imagefinder.usecase.ImageApiCall
 
 internal class ImageUseCase(
     private val imageApiCall: ImageApiCall,
-    private val configuration: Configuration
+    private val configuration: Configuration,
+    private val savedSearchRepository: SavedSearchRepository
 ): ImageInteractor {
 
     override suspend fun findImage(

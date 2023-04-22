@@ -8,4 +8,8 @@ interface ImageInteractor {
 
     fun setApiKey(key: String)
 
+    suspend fun saveSearch(search: String, list: List<Image>)
+
+    suspend fun getSavedSearch(search: String): List<Image>
+
 }

@@ -38,7 +38,11 @@ android {
 
 dependencies {
     val roomVersion = "2.4.3"
+    val koinVersion = "3.2.2"
+
     implementation(project(":entities"))
+    implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation("io.insert-koin:koin-android:$koinVersion")
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")

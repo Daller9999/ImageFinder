@@ -7,7 +7,7 @@ import org.koin.dsl.module
 
 
 internal val domainInteractors = module {
-    factory<ImageInteractor> { ImageUseCase(get(), get()) }
+    factory<ImageInteractor> { ImageUseCase(get(), get(), get()) }
 }
 
 val domainModules = sharedModule + domainInteractors

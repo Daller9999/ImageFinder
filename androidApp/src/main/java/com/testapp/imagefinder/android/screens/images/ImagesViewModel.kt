@@ -4,12 +4,14 @@ import android.util.Log
 import com.testapp.domain.interactors.ImageInteractor
 import com.testapp.entities.Image
 import com.testapp.imagefinder.android.core.BaseViewModel
+import com.testapp.imagefinder.android.network.ConnectionManager
 import com.testapp.imagefinder.android.screens.images.model.ImagesEvent
 import com.testapp.imagefinder.android.screens.images.model.ImagesViewState
 import kotlinx.coroutines.Job
 
 class ImagesViewModel(
-    private val imageInteractor: ImageInteractor
+    private val imageInteractor: ImageInteractor,
+    private val connectionManager: ConnectionManager
 ) : BaseViewModel<ImagesViewState, ImagesEvent>(ImagesViewState()) {
 
     private var jobLoading: Job? = null
