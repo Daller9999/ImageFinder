@@ -6,7 +6,7 @@ import com.testapp.imagefinder.di.sharedModule
 import org.koin.dsl.module
 
 
-val domainInteractors = module {
+internal val domainInteractors = module {
     factory<ImageInteractor> { ImageUseCase(get(), get()) }
 }
 

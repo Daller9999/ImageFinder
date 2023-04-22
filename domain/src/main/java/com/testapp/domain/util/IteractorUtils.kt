@@ -31,3 +31,12 @@ fun ImageHit.toImage(): Image = Image(
     user = user,
     userImageURL = userImageUrl,
 )
+
+suspend fun <T> makeApiCall(call: suspend () -> T?): T? {
+    return try {
+        call.invoke()
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        null
+    }
+}

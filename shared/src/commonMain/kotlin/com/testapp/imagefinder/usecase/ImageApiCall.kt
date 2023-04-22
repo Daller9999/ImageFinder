@@ -15,6 +15,7 @@ class ImageApiCall(
         val url = "${ApiLinks.BASE_URL}/${ApiLinks.API_ROUTE}/"
         return client.request(url) {
             parameter("q", search)
+            parameter("image_type", "photo")
             setBuilderWithKey(HttpMethod.Get)
         }
     }

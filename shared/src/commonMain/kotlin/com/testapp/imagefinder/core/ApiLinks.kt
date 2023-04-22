@@ -1,8 +1,8 @@
 package com.testapp.imagefinder.core
 
-object ApiLinks {
+internal object ApiLinks {
 
-    val BASE_URL = "https://pixabay.com/"
+    const val BASE_URL = "https://pixabay.com"
 
-    val API_ROUTE = "api"
+    const val API_ROUTE = "api"
 }

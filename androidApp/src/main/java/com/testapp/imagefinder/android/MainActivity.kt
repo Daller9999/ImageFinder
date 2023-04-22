@@ -7,13 +7,21 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.testapp.imagefinder.android.screens.ImageScreen
+import com.testapp.domain.interactors.ImageInteractor
+import com.testapp.imagefinder.android.screens.images.ImageScreen
+import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        init()
         setContent { App() }
+    }
+
+    private fun init() {
+        val imageInteractor by inject<ImageInteractor>()
+        imageInteractor.setApiKey(BuildConfig.API_KEY)
     }
 }
 
