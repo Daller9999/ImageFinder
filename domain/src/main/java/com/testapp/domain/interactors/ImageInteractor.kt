@@ -12,4 +12,6 @@ interface ImageInteractor {
 
     suspend fun getSavedSearch(search: String): List<Image>
 
+    suspend fun getSearchStrings(): List<String>
+
 }
