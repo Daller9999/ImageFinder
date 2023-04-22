@@ -1,6 +1,5 @@
 package com.testapp.imagefinder.android.screens.images
 
-import android.util.Log
 import com.testapp.domain.interactors.ImageInteractor
 import com.testapp.entities.Image
 import com.testapp.imagefinder.android.core.BaseViewModel
@@ -26,12 +25,28 @@ class ImagesViewModel(
         when (viewEvent) {
             is ImagesEvent.OnTextChanged -> onTextChanged(viewEvent.text)
             ImagesEvent.OnLoadNext -> onLoadNext()
+            ImagesEvent.OnHideKeyboard -> onHideKeyBoard()
+        }
+    }
+
+    private fun onHideKeyBoard() {
+        val text = viewStates().value.textSearch
+        if (connectionManager.isOnline()) {
+            launchIO {
+                val saved = imageInteractor.getSearchStrings()
+                update { it.copy(savedSearchWords = saved) }
+            }
+            uploadImage(text)
+        } else {
+            launchIO {
+                val list = imageInteractor.getSavedSearch(text)
+                update { it.copy(images = list.transformList()) }
+            }
         }
     }
 
     private fun onTextChanged(text: String) {
         update { it.copy(textSearch = text) }
-        uploadImage(text)
     }
 
     private fun onLoadNext() {
@@ -41,16 +56,17 @@ class ImagesViewModel(
     private fun uploadImage(text: String) {
         val isSameSearch = text == this.text
         this.text = text
-        Log.i("TEST_TEST", "page: $page")
+
+        if (text.isEmpty()) return
+
         if (isSameSearch) {
             page++
             jobLoading = launchIO {
                 val result = uploadImages()
-                update {
-                    val list = it.images
-                    list.addAll(result)
-                    it.copy(images = list)
-                }
+                val list = viewStates().value.images
+                list.addAll(result)
+                imageInteractor.saveSearch(text, list.flatten())
+                update { it.copy(images = list) }
             }
         } else {
             page = 1
@@ -58,6 +74,7 @@ class ImagesViewModel(
             jobLoading = launchIO {
                 update { it.copy(isLoading = true) }
                 val result = uploadImages()
+                imageInteractor.saveSearch(text, result.flatten())
                 update {
                     it.copy(
                         images = result,
@@ -69,12 +86,15 @@ class ImagesViewModel(
     }
 
     private suspend fun uploadImages(): ArrayList<List<Image>> {
-        val result = imageInteractor.findImage(text, page)
+        return imageInteractor.findImage(text, page).transformList()
+    }
+
+    private fun List<Image>.transformList(): ArrayList<List<Image>> {
         val images = arrayListOf<List<Image>>()
-        for (i in result.indices step 2) {
-            val arrayList = arrayListOf(result[i])
-            if (i + 1 < result.size) {
-                arrayList.add(result[i + 1])
+        for (i in this.indices step 2) {
+            val arrayList = arrayListOf(this[i])
+            if (i + 1 < size) {
+                arrayList.add(this[i + 1])
             }
             images.add(arrayList)
         }
