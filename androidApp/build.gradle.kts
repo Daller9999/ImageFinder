@@ -1,7 +1,14 @@
+//import java.util.Properties
+//import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     kotlin("android")
 }
+
+//val apikeyPropertiesFile = rootProject.file("apikey.properties")
+//val apikeyProperties = Properties()
+//apikeyProperties.load(FileInputStream(apikeyPropertiesFile))
 
 android {
     namespace = "com.testapp.imagefinder.android"
@@ -12,6 +19,8 @@ android {
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
+
+        buildConfigField("String", "API_KEY", "fsdf")
     }
     buildFeatures {
         compose = true
