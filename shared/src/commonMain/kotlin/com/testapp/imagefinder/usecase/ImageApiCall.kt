@@ -14,6 +14,7 @@ class ImageApiCall(
     suspend fun findImages(search: String): ImageList {
         val url = "${ApiLinks.BASE_URL}/${ApiLinks.API_ROUTE}/"
         return client.request(url) {
+            parameter("per_page", 100)
             parameter("q", search)
             parameter("image_type", "photo")
             setBuilderWithKey(HttpMethod.Get)

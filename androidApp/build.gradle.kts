@@ -54,6 +54,8 @@ dependencies {
 
     implementation(project(":domain"))
     implementation(project(":entities"))
+    implementation(project(":coreui"))
+
     implementation("io.coil-kt:coil-compose:2.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
