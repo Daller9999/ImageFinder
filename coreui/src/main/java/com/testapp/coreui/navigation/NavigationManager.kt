@@ -1,7 +1,6 @@
 package com.testapp.coreui.navigation
 
 import android.content.Context
-import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -16,16 +15,16 @@ class NavigationManager(
     context: Context
 ) : NavHostController(context) {
 
-    private val hashMapBundle = hashMapOf<String, Bundle>()
+    private val hashMapBundle = hashMapOf<String, Any>()
     private var currentRoute: String = ""
 
-    fun navigate(route: String, bundle: Bundle) {
+    fun navigate(route: String, bundle: Any) {
         hashMapBundle[route] = bundle
         currentRoute = route
         navigate(route)
     }
 
-    fun getArgs(): Bundle? = hashMapBundle[currentRoute]
+    fun getArgs(): Any? = hashMapBundle[currentRoute]
 
     override fun popBackStack(): Boolean {
         hashMapBundle.remove(currentRoute)

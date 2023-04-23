@@ -26,6 +26,21 @@ class ImagesViewModel(
             is ImagesEvent.OnTextChanged -> onTextChanged(viewEvent.text)
             ImagesEvent.OnLoadNext -> onLoadNext()
             ImagesEvent.OnHideKeyboard -> onUploadRequest()
+            ImagesEvent.OnCloseDialog -> onCloseDialog()
+            is ImagesEvent.OnImageClick -> onImageClick(viewEvent.image)
+        }
+    }
+
+    private fun onCloseDialog() {
+        update { it.copy(isVisibleDialog = false) }
+    }
+
+    private fun onImageClick(image: Image) {
+        update {
+            it.copy(
+                selectedImage = image,
+                isVisibleDialog = true
+            )
         }
     }
 

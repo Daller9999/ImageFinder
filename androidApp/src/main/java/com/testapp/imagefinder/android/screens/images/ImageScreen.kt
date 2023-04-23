@@ -1,5 +1,6 @@
 package com.testapp.imagefinder.android.screens.images
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,20 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.os.bundleOf
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import androidx.compose.ui.window.Dialog
+import com.testapp.coreui.AsyncImageLoading
 import com.testapp.coreui.Keyboard
 import com.testapp.coreui.TagView
 import com.testapp.coreui.keyboardAsState
@@ -47,12 +42,15 @@ fun ImageScreen(navController: NavigationManager, viewModel: ImagesViewModel) {
         onTextChange = { viewModel.obtainEvent(ImagesEvent.OnTextChanged(it)) },
         onLoadNext = { viewModel.obtainEvent(ImagesEvent.OnLoadNext) },
         onHideKeyBoard = { viewModel.obtainEvent(ImagesEvent.OnHideKeyboard) },
-        onImageClick = {
+        onImageClick = { viewModel.obtainEvent(ImagesEvent.OnImageClick(it)) },
+        onOpenDialog = {
+            viewModel.obtainEvent(ImagesEvent.OnCloseDialog)
             navController.navigate(
                 route = Screens.DETAILED.name,
-                bundle = bundleOf()
+                bundle = state.value.selectedImage
             )
-        }
+        },
+        onCloseDialog = { viewModel.obtainEvent(ImagesEvent.OnCloseDialog) }
     )
 }
 
@@ -63,7 +61,9 @@ private fun ImageView(
     onTextChange: (String) -> Unit,
     onLoadNext: () -> Unit,
     onHideKeyBoard: () -> Unit,
-    onImageClick: (Image) -> Unit
+    onImageClick: (Image) -> Unit,
+    onOpenDialog: () -> Unit,
+    onCloseDialog: () -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val keyboardState by keyboardAsState()
@@ -110,6 +110,67 @@ private fun ImageView(
             )
         }
     }
+    if (state.isVisibleDialog) {
+        Dialog(onDismissRequest = onCloseDialog) {
+            DialogIsOpen(
+                onOpen = onOpenDialog,
+                onClose = onCloseDialog
+            )
+        }
+    }
+}
+
+@Composable
+fun DialogIsOpen(
+    onOpen: () -> Unit,
+    onClose: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(25.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(all = 20.dp)
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.open_full_image),
+                fontSize = 25.sp,
+                color = Color.Black,
+                textAlign = TextAlign.Center
+            )
+            Row(
+                modifier = Modifier.padding(top = 20.dp)
+            ) {
+                ButtonOpen(
+                    text = stringResource(id = R.string.yes),
+                    onClick = onOpen
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                ButtonOpen(
+                    text = stringResource(id = R.string.close),
+                    onClick = onClose
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ButtonOpen(text: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+        border = BorderStroke(width = 1.dp, color = Color.Black),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Text(
+            modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp),
+            text = text,
+            fontSize = 20.sp,
+            color = Color.Black
+        )
+    }
 }
 
 @Composable
@@ -131,7 +192,6 @@ private fun ImagesList(
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.size(80.dp),
-                color = Color.Green,
                 strokeWidth = 10.dp
             )
         }
@@ -220,17 +280,13 @@ private fun ImageViewInfo(
         .padding(all = 2.dp)
         .clickable { onImageClick.invoke(image) }
     ) {
-        Card(shape = RoundedCornerShape(size = 20.dp)) {
-            AsyncImage(
+        Card(
+            shape = RoundedCornerShape(size = 20.dp),
+            elevation = 5.dp
+        ) {
+            AsyncImageLoading(
                 modifier = Modifier.height(220.dp),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(image.webFormatURL)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .crossfade(true)
-                    .build(),
-                contentScale = ContentScale.Crop,
-                contentDescription = null
+                model = image.webFormatURL
             )
         }
         Text(

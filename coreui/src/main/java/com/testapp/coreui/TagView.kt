@@ -19,7 +19,8 @@ fun TagView(tag: String) {
         modifier = Modifier.padding(all = 2.dp),
         shape = RoundedCornerShape(size = 25.dp),
         backgroundColor = Color.Gray,
-        border = BorderStroke(width = 1.dp, color = Color.Black)
+        border = BorderStroke(width = 1.dp, color = Color.Black),
+        elevation = 5.dp
     ) {
         Box(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),

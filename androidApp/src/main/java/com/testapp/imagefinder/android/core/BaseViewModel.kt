@@ -26,7 +26,7 @@ abstract class BaseViewModel<State, Event>(
         _viewStates.update(update)
     }
 
-    fun launchIO(
+    protected fun launchIO(
         call: suspend () -> Unit
     ) = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) { call.invoke() }
 

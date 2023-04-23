@@ -3,4 +3,8 @@
     <string name="app_name">ImageFinder</string>
     <string name="empty">Nothing found</string>
     <string name="saved_search">Saved search</string>
+    <string name="open_full_image">Open full image?</string>
+    <string name="yes">Yes</string>
+    <string name="close">No</string>
+
 </resources>
