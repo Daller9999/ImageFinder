@@ -1,16 +1,9 @@
-import java.util.Properties
-import java.io.FileInputStream
-
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
     id("kotlinx-serialization") version "1.8.0"
 }
-
-val apikeyPropertiesFile = rootProject.file("apikey.properties")
-val apikeyProperties = Properties()
-apikeyProperties.load(FileInputStream(apikeyPropertiesFile))
 
 kotlin {
     android {
