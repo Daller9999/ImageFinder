@@ -23,8 +23,10 @@ internal class ImageUseCase(
         val list = result.first
         return if (list != null) {
             Pair(list.hits.map { it.toImage() }, -1)
-        } else {
+        } else if (result.second == 400) {
             Pair(emptyList(), END_OF_SEARCH)
+        } else {
+            Pair(emptyList(), -1)
         }
     }
 

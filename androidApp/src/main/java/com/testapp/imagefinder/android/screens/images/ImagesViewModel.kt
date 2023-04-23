@@ -47,7 +47,7 @@ class ImagesViewModel(
 
     private fun onLoadNext() {
         if (isEndOfSearch) return
-        
+
         page++
         jobLoading = launchIO {
             val result = uploadImages()
