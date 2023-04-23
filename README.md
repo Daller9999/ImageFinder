@@ -11,4 +11,4 @@ This project was made using:
 
 To run this project, you need to create your own key and put it inside the root directory. The file name must be `apikey.properties`
 
-Key must look like: API-KEY=YOUR_KEY
+Key must look like: `API_KEY = YOUR_KEY`
