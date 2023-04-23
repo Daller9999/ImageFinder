@@ -2,7 +2,7 @@ package com.testapp.domain.usecase
 
 import com.testapp.data.datastore.SavedSearchRepository
 import com.testapp.domain.interactors.ImageInteractor
-import com.testapp.domain.util.makeApiCall
+import com.testapp.domain.usecase.Errors.END_OF_SEARCH
 import com.testapp.domain.util.toImage
 import com.testapp.entities.Image
 import com.testapp.entities.ImageList
@@ -18,12 +18,15 @@ internal class ImageUseCase(
     override suspend fun findImage(
         search: String,
         page: Int
-    ): List<Image> = makeApiCall {
-        imageApiCall.findImages(
-            search = search,
-            page = page
-        ).hits.map { it.toImage() }
-    } ?: emptyList()
+    ): Pair<List<Image>, Int> {
+        val result = imageApiCall.findImages(search, page)
+        val list = result.first
+        return if (list != null) {
+            Pair(list.hits.map { it.toImage() }, -1)
+        } else {
+            Pair(emptyList(), END_OF_SEARCH)
+        }
+    }
 
     override fun setApiKey(key: String) {
         configuration.apiKey = key

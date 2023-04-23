@@ -1,6 +1,7 @@
 package com.testapp.imagefinder.android.screens.images
 
 import com.testapp.domain.interactors.ImageInteractor
+import com.testapp.domain.usecase.Errors
 import com.testapp.entities.Image
 import com.testapp.imagefinder.android.core.BaseViewModel
 import com.testapp.imagefinder.android.network.ConnectionManager
@@ -14,8 +15,8 @@ class ImagesViewModel(
 ) : BaseViewModel<ImagesViewState, ImagesEvent>(ImagesViewState()) {
 
     private var jobLoading: Job? = null
-    private var lastSearch: String = ""
     private var page: Int = 1
+    private var isEndOfSearch: Boolean = false
 
     init {
         onUploadRequest()
@@ -24,7 +25,7 @@ class ImagesViewModel(
     override fun obtainEvent(viewEvent: ImagesEvent) {
         when (viewEvent) {
             is ImagesEvent.OnTextChanged -> onTextChanged(viewEvent.text)
-            ImagesEvent.OnLoadNext -> uploadImage()
+            ImagesEvent.OnLoadNext -> onLoadNext()
             ImagesEvent.OnHideKeyboard -> onUploadRequest()
             ImagesEvent.OnCloseDialog -> onCloseDialog()
             is ImagesEvent.OnImageClick -> onImageClick(viewEvent.image)
@@ -41,6 +42,23 @@ class ImagesViewModel(
                 selectedImage = image,
                 isVisibleDialog = true
             )
+        }
+    }
+
+    private fun onLoadNext() {
+        if (isEndOfSearch) return
+        
+        page++
+        jobLoading = launchIO {
+            val result = uploadImages()
+            if (result.isEmpty()) return@launchIO
+
+            val state = viewStates().value
+            val list = state.images
+            list.addAll(result)
+            imageInteractor.saveSearch(state.textSearch, list.flatten())
+            updateSearchHistory()
+            update { it.copy(images = list) }
         }
     }
 
@@ -67,45 +85,33 @@ class ImagesViewModel(
 
     private fun uploadImage() {
         val search = viewStates().value.textSearch
-        val isSameSearch = search == lastSearch
-        lastSearch = search
-
-        if (search.isEmpty()) return
-
-        if (isSameSearch) {
-            page++
-            jobLoading = launchIO {
-                val result = uploadImages()
-                if (result.isEmpty()) return@launchIO
-
-                val list = viewStates().value.images
-                list.addAll(result)
-                imageInteractor.saveSearch(search, list.flatten())
+        page = 1
+        isEndOfSearch = false
+        jobLoading?.cancel()
+        jobLoading = launchIO {
+            update { it.copy(isLoading = true) }
+            val result = uploadImages()
+            if (result.isNotEmpty()) {
+                imageInteractor.saveSearch(search, result.flatten())
                 updateSearchHistory()
-                update { it.copy(images = list) }
             }
-        } else {
-            page = 1
-            jobLoading?.cancel()
-            jobLoading = launchIO {
-                update { it.copy(isLoading = true) }
-                val result = uploadImages()
-                if (result.isNotEmpty()) {
-                    imageInteractor.saveSearch(search, result.flatten())
-                    updateSearchHistory()
-                }
-                update {
-                    it.copy(
-                        images = result,
-                        isLoading = false
-                    )
-                }
+            update {
+                it.copy(
+                    images = result,
+                    isLoading = false
+                )
             }
         }
     }
 
     private suspend fun uploadImages(): ArrayList<List<Image>> {
-        return imageInteractor.findImage(viewStates().value.textSearch, page).transformList()
+        val result = imageInteractor.findImage(viewStates().value.textSearch, page)
+        return if (result.second == Errors.END_OF_SEARCH) {
+            isEndOfSearch = true
+            arrayListOf()
+        } else {
+            result.first.transformList()
+        }
     }
 
     private fun List<Image>.transformList(): ArrayList<List<Image>> {

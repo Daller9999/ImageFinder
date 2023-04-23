@@ -1,19 +1,22 @@
 package com.testapp.imagefinder.usecase
 
+import com.testapp.imagefinder.core.ApiCall
 import com.testapp.imagefinder.core.ApiLinks
 import com.testapp.imagefinder.core.ClientCore
-import com.testapp.imagefinder.core.ApiCall
 import com.testapp.imagefinder.entities.ImageList
 import io.ktor.client.request.*
 import io.ktor.http.*
 
 class ImageApiCall(
     clientCore: ClientCore
-): ApiCall(clientCore) {
+) : ApiCall(clientCore) {
 
-    suspend fun findImages(search: String, page: Int): ImageList {
+    suspend fun findImages(
+        search: String,
+        page: Int
+    ): Pair<ImageList?, Int?> = makeApiCall {
         val url = "${ApiLinks.BASE_URL}/${ApiLinks.API_ROUTE}/"
-        return client.request(url) {
+        client.request(url) {
             parameter("page", page)
             parameter("per_page", 100)
             parameter("q", search)

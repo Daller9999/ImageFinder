@@ -4,7 +4,7 @@ import com.testapp.entities.Image
 
 interface ImageInteractor {
 
-    suspend fun findImage(search: String, page: Int): List<Image>
+    suspend fun findImage(search: String, page: Int): Pair<List<Image>, Int>
 
     fun setApiKey(key: String)
 
