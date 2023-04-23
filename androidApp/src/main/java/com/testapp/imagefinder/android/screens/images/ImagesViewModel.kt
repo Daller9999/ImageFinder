@@ -24,7 +24,7 @@ class ImagesViewModel(
     override fun obtainEvent(viewEvent: ImagesEvent) {
         when (viewEvent) {
             is ImagesEvent.OnTextChanged -> onTextChanged(viewEvent.text)
-            ImagesEvent.OnLoadNext -> onLoadNext()
+            ImagesEvent.OnLoadNext -> uploadImage()
             ImagesEvent.OnHideKeyboard -> onUploadRequest()
             ImagesEvent.OnCloseDialog -> onCloseDialog()
             is ImagesEvent.OnImageClick -> onImageClick(viewEvent.image)
@@ -64,11 +64,7 @@ class ImagesViewModel(
     private fun onTextChanged(text: String) {
         update { it.copy(textSearch = text) }
     }
-
-    private fun onLoadNext() {
-        uploadImage()
-    }
-
+    
     private fun uploadImage() {
         val search = viewStates().value.textSearch
         val isSameSearch = search == lastSearch
@@ -94,7 +90,7 @@ class ImagesViewModel(
             jobLoading = launchIO {
                 update { it.copy(isLoading = true) }
                 val result = uploadImages()
-                if (result.isEmpty()) {
+                if (result.isNotEmpty()) {
                     imageInteractor.saveSearch(search, result.flatten())
                     updateSearchHistory()
                 }
