@@ -64,7 +64,7 @@ class ImagesViewModel(
     private fun onTextChanged(text: String) {
         update { it.copy(textSearch = text) }
     }
-    
+
     private fun uploadImage() {
         val search = viewStates().value.textSearch
         val isSameSearch = search == lastSearch
@@ -105,7 +105,7 @@ class ImagesViewModel(
     }
 
     private suspend fun uploadImages(): ArrayList<List<Image>> {
-        return imageInteractor.findImage(lastSearch, page).transformList()
+        return imageInteractor.findImage(viewStates().value.textSearch, page).transformList()
     }
 
     private fun List<Image>.transformList(): ArrayList<List<Image>> {

@@ -70,11 +70,9 @@ private fun ImageView(
     val lastKeyBoardState = remember { mutableStateOf(Keyboard.Closed) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-    if (keyboardState == Keyboard.Closed) {
-        if (lastKeyBoardState.value != keyboardState) {
-            onHideKeyBoard.invoke()
-            focusManager.clearFocus()
-        }
+    if (keyboardState == Keyboard.Closed && lastKeyBoardState.value == Keyboard.Opened) {
+        onHideKeyBoard.invoke()
+        focusManager.clearFocus()
     }
     lastKeyBoardState.value = keyboardState
 
