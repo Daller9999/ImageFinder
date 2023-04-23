@@ -8,5 +8,7 @@ data class ImagesViewState(
     val textSearch: String = "fruits",
     val savedSearchWords: List<String> = emptyList(),
     val isVisibleDialog: Boolean = false,
-    val selectedImage: Image = Image()
+    val selectedImage: Image = Image(),
+    val isLoadingNext: Boolean = false,
+    val isEndOfSearch: Boolean = false
 )

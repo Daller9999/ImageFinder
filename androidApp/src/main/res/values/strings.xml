@@ -6,5 +6,5 @@
     <string name="open_full_image">Open full image?</string>
     <string name="yes">Yes</string>
     <string name="close">No</string>
-
+    <string name="load_next">Load next</string>
 </resources>

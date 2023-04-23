@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -177,12 +176,6 @@ private fun ImagesList(
     onLoadNext: () -> Unit,
     onImageClick: (Image) -> Unit
 ) {
-    val scrollState = rememberLazyListState()
-    val index = remember { derivedStateOf { scrollState.firstVisibleItemIndex } }.value
-    if (state.images.isNotEmpty() && index + 20 > state.images.size) {
-        onLoadNext.invoke()
-    }
-
     if (state.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -194,12 +187,41 @@ private fun ImagesList(
             )
         }
     } else if (state.images.isNotEmpty()) {
-        LazyColumn(state = scrollState) {
+        LazyColumn {
             items(state.images) {
                 ImageRow(
                     images = it,
                     onImageClick = onImageClick
                 )
+            }
+            item {
+                if (!state.isEndOfSearch) {
+                    Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp)
+                            .height(50.dp),
+                        onClick = onLoadNext,
+                        shape = RoundedCornerShape(20.dp),
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                        border = BorderStroke(
+                            width = 1.dp,
+                            color = getButtonColor(state)
+                        )
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.load_next),
+                                color = getButtonColor(state),
+                                fontSize = 18.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
             }
         }
     } else {
@@ -212,6 +234,10 @@ private fun ImagesList(
             textAlign = TextAlign.Center
         )
     }
+}
+
+private fun getButtonColor(state: ImagesViewState): Color {
+    return if (!state.isLoadingNext) Color.Black else Color.Gray.copy(alpha = 0.4f)
 }
 
 @Composable
