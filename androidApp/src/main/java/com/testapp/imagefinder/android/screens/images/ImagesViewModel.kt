@@ -18,25 +18,25 @@ class ImagesViewModel(
     private var page: Int = 1
 
     init {
-        uploadImage("fruits")
+        onUploadRequest()
     }
 
     override fun obtainEvent(viewEvent: ImagesEvent) {
         when (viewEvent) {
             is ImagesEvent.OnTextChanged -> onTextChanged(viewEvent.text)
             ImagesEvent.OnLoadNext -> onLoadNext()
-            ImagesEvent.OnHideKeyboard -> onHideKeyBoard()
+            ImagesEvent.OnHideKeyboard -> onUploadRequest()
         }
     }
 
-    private fun onHideKeyBoard() {
+    private fun onUploadRequest() {
         val text = viewStates().value.textSearch
+        launchIO {
+            val saved = imageInteractor.getSearchStrings()
+            update { it.copy(savedSearchWords = saved) }
+        }
         if (connectionManager.isOnline()) {
-            launchIO {
-                val saved = imageInteractor.getSearchStrings()
-                update { it.copy(savedSearchWords = saved) }
-            }
-            uploadImage(text)
+            uploadImage()
         } else {
             launchIO {
                 val list = imageInteractor.getSavedSearch(text)
@@ -50,10 +50,11 @@ class ImagesViewModel(
     }
 
     private fun onLoadNext() {
-        uploadImage(text = text)
+        uploadImage()
     }
 
-    private fun uploadImage(text: String) {
+    private fun uploadImage() {
+        val text = viewStates().value.textSearch
         val isSameSearch = text == this.text
         this.text = text
 

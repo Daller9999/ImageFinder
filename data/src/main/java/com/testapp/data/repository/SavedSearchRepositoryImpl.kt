@@ -15,7 +15,7 @@ internal class SavedSearchRepositoryImpl(
 ) : SavedSearchRepository {
 
     private val gson = Gson()
-    private val typedValue = object : TypeToken<List<String>>() {}.type
+    private val typedValue = object : TypeToken<List<Image>>() {}.type
 
     override suspend fun insert(
         savedSearch: ImageList

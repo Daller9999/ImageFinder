@@ -10,7 +10,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.testapp.coreui.navigation.rememberNavManager
 import com.testapp.domain.interactors.ImageInteractor
+import com.testapp.imagefinder.android.screens.detailedimage.DetailedScreen
 import com.testapp.imagefinder.android.screens.images.ImageScreen
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
@@ -30,7 +32,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App() {
-    val navController = rememberNavController()
+    val navController = rememberNavManager()
     NavHost(
         modifier = Modifier.background(color = Color.White),
         navController = navController,
@@ -42,10 +44,16 @@ fun App() {
                 viewModel = koinViewModel()
             )
         }
+        composable(Screens.DETAILED.name) {
+            DetailedScreen(
+                navController = navController,
+                viewModel = koinViewModel()
+            )
+        }
     }
 }
 
-enum class Screens(name: String) {
-    HOME("HOME"),
-    DETAILED("DETAILED")
+enum class Screens {
+    HOME,
+    DETAILED
 }
