@@ -29,9 +29,9 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "ImageFinder"
-include(":androidApp")
+include(":androidApp:android")
+include(":androidApp:coreui")
+include(":androidApp:domain")
+include(":androidApp:entities")
+include(":androidApp:data")
 include(":shared")
-include(":domain")
-include(":entities")
-include(":coreui")
-include(":data")

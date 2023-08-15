@@ -14,7 +14,7 @@ android {
     namespace = "com.testapp.imagefinder.android"
     compileSdk = 33
     defaultConfig {
-        applicationId = "com.testapp.imagefinder.android"
+        applicationId = "com.testapp.imagefinder"
         minSdk = 24
         targetSdk = 33
         versionCode = 1
@@ -48,9 +48,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain"))
-    implementation(project(":entities"))
-    implementation(project(":coreui"))
+    implementation(project(":androidApp:domain"))
+    implementation(project(":androidApp:entities"))
+    implementation(project(":androidApp:coreui"))
 
     implementation("io.coil-kt:coil-compose:$coilVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")

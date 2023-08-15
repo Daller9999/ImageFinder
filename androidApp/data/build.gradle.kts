@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":entities"))
+    implementation(project(":androidApp:entities"))
     implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("io.insert-koin:koin-android:$koinVersion")
     implementation("com.google.code.gson:gson:$gsonVersion")

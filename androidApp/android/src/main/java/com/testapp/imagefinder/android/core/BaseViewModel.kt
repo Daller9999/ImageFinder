@@ -16,8 +16,6 @@ abstract class BaseViewModel<State, Event>(
 
     private val _viewStates: MutableStateFlow<State> = MutableStateFlow(initState)
 
-    protected val scopeIO = CoroutineScope(Dispatchers.IO)
-
     fun viewStates(): StateFlow<State> = _viewStates
 
     abstract fun obtainEvent(viewEvent: Event)

@@ -35,8 +35,8 @@ android {
 
 dependencies {
     implementation(project(":shared"))
-    implementation(project(":entities"))
-    implementation(project(":data"))
+    implementation(project(":androidApp:entities"))
+    implementation(project(":androidApp:data"))
 
     implementation("io.insert-koin:koin-core:$koinVersion")
     implementation("io.insert-koin:koin-android:$koinVersion")
